@@ -16,9 +16,6 @@ task.spawn(function()
     local success, err = pcall(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/chapeudepalha260-lab/CiriloMi/refs/heads/main/README.md"))()
     end)
-
-    if not success then
-        warn("Falha ao executar auto-load:", err)
     end
 end)
 do
