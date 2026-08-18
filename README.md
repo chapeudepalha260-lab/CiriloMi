@@ -1,3 +1,4 @@
+
 task.spawn(function()
     repeat task.wait() until game:IsLoaded() and game.Players.LocalPlayer
     task.wait(1)
@@ -13,7 +14,7 @@ task.spawn(function()
     repeat task.wait() until LP and LP.Character
 
     local success, err = pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/AnhDangNhoEm/TuanAnhIOS/refs/heads/main/koby"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/chapeudepalha260-lab/CiriloMi/refs/heads/main/README.md"))()
     end)
 
     if not success then
