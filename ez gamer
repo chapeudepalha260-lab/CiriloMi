@@ -1,0 +1,129 @@
+-- CONFIG - MUDA AQUI
+local NOME_PASTA_NPC = "NPCs" -- Nome da pasta dos seus mobs no Workspace
+local NOME_DA_ARMA = "Espada" -- Nome da sua arma na Backpack
+local VELOCIDADE_TP = 50 -- Quanto maior, mais rápido vai
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local VirtualInput = game:GetService("VirtualInputManager")
+local plr = Players.LocalPlayer
+
+local AUTO_FARM = false
+local SPEED_HACK = false
+local WALK_SPEED_NORMAL = 16
+
+-- CRIAR A GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "FarmHub"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.Parent = plr:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 260, 0, 220)
+frame.Position = UDim2.new(0, 20, 0, 100)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+frame.Parent = screenGui
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 8)
+
+local titulo = Instance.new("TextLabel")
+titulo.Size = UDim2.new(1, 0, 0, 35)
+titulo.Text = "FARM HUB v2.0"
+titulo.TextColor3 = Color3.fromRGB(0, 170, 255)
+titulo.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+titulo.Font = Enum.Font.GothamBold
+titulo.TextSize = 20
+titulo.Parent = frame
+Instance.new("UICorner", titulo).CornerRadius = UDim.new(0, 8)
+
+-- FUNÇÃO PRA CRIAR BOTÃO
+local function criarBotao(nome, posY, callback)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0.9, 0, 0, 40)
+	btn.Position = UDim2.new(0.05, 0, 0, posY)
+	btn.Text = nome
+	btn.TextColor3 = Color3.fromRGB(255,255,255)
+	btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	btn.Font = Enum.Font.GothamSemibold
+	btn.TextSize = 16
+	btn.Parent = frame
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+	btn.MouseButton1Click:Connect(callback)
+	return btn
+end
+
+-- FUNCOES
+local function getChar() return plr.Character or plr.CharacterAdded:Wait() end
+
+local function irAte(pos)
+	local hrp = getChar():WaitForChild("HumanoidRootPart")
+	local dist = (hrp.Position - pos).Magnitude
+	local tempo = dist / VELOCIDADE_TP
+	local tween = TweenService:Create(hrp, TweenInfo.new(tempo, Enum.EasingStyle.Linear), {CFrame = CFrame.new(pos)})
+	tween:Play()
+	tween.Completed:Wait()
+end
+
+local function getNPCmaisPerto()
+	local hrp = getChar():WaitForChild("HumanoidRootPart")
+	local maisPerto, distMenor = nil, math.huge
+	local pastaNPC = workspace:FindFirstChild(NOME_PASTA_NPC)
+	if not pastaNPC then return nil end
+	for _, npc in pairs(pastaNPC:GetChildren()) do
+		if npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 and npc:FindFirstChild("HumanoidRootPart") then
+			local dist = (npc.HumanoidRootPart.Position - hrp.Position).Magnitude
+			if dist < distMenor then maisPerto, distMenor = npc, dist end
+		end
+	end
+	return maisPerto
+end
+
+local function equiparArma()
+	local char = getChar()
+	if not char:FindFirstChild(NOME_DA_ARMA) then
+		local tool = plr.Backpack:FindFirstChild(NOME_DA_ARMA)
+		if tool then char.Humanoid:EquipTool(tool) end
+	end
+end
+
+-- BOTOES
+local btnFarm = criarBotao("Auto Farm: OFF", 50, function()
+	AUTO_FARM = not AUTO_FARM
+	btnFarm.Text = AUTO_FARM and "Auto Farm: ON" or "Auto Farm: OFF"
+	btnFarm.BackgroundColor3 = AUTO_FARM and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(170, 0, 0)
+end)
+
+local btnSpeed = criarBotao("Speed: OFF", 100, function()
+	SPEED_HACK = not SPEED_HACK
+	local hum = getChar():FindFirstChild("Humanoid")
+	if hum then hum.WalkSpeed = SPEED_HACK and 50 or WALK_SPEED_NORMAL end
+	btnSpeed.Text = SPEED_HACK and "Speed: ON" or "Speed: OFF"
+	btnSpeed.BackgroundColor3 = SPEED_HACK and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(170, 0, 0)
+end)
+
+local btnTP = criarBotao("TP para Spawn", 150, function()
+	local spawn = workspace:FindFirstChild("SpawnLocation")
+	if spawn then irAte(spawn.Position) end
+end)
+
+-- LOOP DO FARM
+task.spawn(function()
+	while true do
+		task.wait(0.2)
+		if AUTO_FARM then
+			local npc = getNPCmaisPerto()
+			if npc then
+				equiparArma()
+				irAte(npc.HumanoidRootPart.Position + Vector3.new(0,0,3))
+				while npc.Humanoid.Health > 0 and AUTO_FARM do
+					VirtualInput:SendMouseButtonEvent(0,0,0,true,game,1)
+					task.wait(0.1)
+				end
+			end
+		end
+	end
+end)
+  loadstring(game:HttpGet(""))()
