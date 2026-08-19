@@ -1,0 +1,17 @@
+local Library = loadstring(game:HttpGet(""))()
+
+local Window = Library:CreateWindow({
+    Title = 'MEU JOGO HUB | v1.0',
+    Center = true, 
+    AutoShow = true,
+})
+
+local Tabs = {
+    Farm = Window:AddTab('🚀 Farm'),
+    Level = Window:AddTab('📈 Level'),
+    Misc = Window:AddTab('⚡ Misc')
+}
+
+-- Exemplo de toggle
+Tabs.Farm:AddToggle("AutoFarm", {Title = "Auto Farm Mob", Default = false})
+Tabs.Level:AddLabel("Seu Level: "..game.Players.LocalPlayer.leaderstats.Level.Value)
