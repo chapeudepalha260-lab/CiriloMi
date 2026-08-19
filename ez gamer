@@ -142,4 +142,27 @@ task.spawn(function()
 		end
 	end
 end)
-  loadstring(game:HttpGet(""))()
+ -- VARIAVEIS NOVAS - coloca junto das outras lá em cima
+local AUTO_LEVEL = false
+local AUTO_CDK = false
+local AUTO_FRUIT = false
+
+-- BOTOES NOVOS - cola aqui
+y = y + 40
+criarBotao("Farm Level Max: OFF", y, function()
+	AUTO_LEVEL = not AUTO_LEVEL
+	script.Parent.Text = AUTO_LEVEL and "Farm Level Max: ON" or "Farm Level Max: OFF"
+end)
+
+y = y + 40
+criarBotao("Auto CDK: OFF", y, function()
+	AUTO_CDK = not AUTO_CDK
+	script.Parent.Text = AUTO_CDK and "Auto CDK: ON" or "Auto CDK: OFF"
+end)
+
+y = y + 40
+criarBotao("Auto Pegar Fruit: OFF", y, function()
+	AUTO_FRUIT = not AUTO_FRUIT
+	script.Parent.Text = AUTO_FRUIT and "Auto Pegar Fruit: ON" or "Auto Pegar Fruit: OFF"
+end)
+loadstring(game:HttpGet(""))()
